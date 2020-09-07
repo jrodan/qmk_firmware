@@ -11,6 +11,10 @@ Hardware Availability: http://groupbuys.mechboards.co.uk/shop/hs60-hotswap-60-pc
 
 Due to the RGB implementation, the HS60 is currently not compatible with community layouts.
 
+## QMK Basics
+
+https://docs.qmk.fm/ - a valid installation is required to proceed
+
 ## Instructions
 
 ### Build
@@ -31,6 +35,7 @@ See [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools)
 
 ### Flash
 
+- select file "hs60_v2_ansi_default.bin" from QMK root folder in QMK Toolbox
 - Unplug
 - Hold Escape
 - Plug In
