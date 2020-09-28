@@ -3,7 +3,7 @@ RGB_MATRIX_EFFECT(rainbow_stripe)
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
 
 static HSV rainbow_stripe_math(HSV hsv, uint8_t i, uint8_t time) {
-    if (i >= 14 && i <= 21) {
+    if (HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
         hsv.h = g_led_config.point[i].x - time;
     } else {
         hsv.v = 0;
