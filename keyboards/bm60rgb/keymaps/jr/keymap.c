@@ -143,3 +143,5 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // https://github.com/qmk/qmk_firmware/blob/a4fd5e2491aa7213d15ef2ff3615b8eb75660e93/keyboards/crkbd/keymaps/rpbaptist/keymap.c
 // https://github.com/qmk/qmk_firmware/blob/caa70df816033c30dbbbf4c5a90d803c7bb1dfde/users/curry/rgb_matrix_user.c
 // per layer / per key https://www.reddit.com/r/olkb/comments/92w69w/heres_how_ive_implemented_perlayerperkey_color/
+
+// customizing of RGB effects: https://github.com/SirTimmyTimbit/customizable-gradient-effect-for-drop-alt
