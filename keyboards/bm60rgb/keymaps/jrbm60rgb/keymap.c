@@ -19,11 +19,7 @@
 #define TAPPING_TERM 350
 
 static uint32_t underglow_mode;
-
-enum my_keycodes {
-  FOO = SAFE_RANGE,
-  JR_UG_MODE
-};
+static uint32_t custom_light_mode;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
@@ -36,7 +32,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         RESET, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, 
         _______, KC_F14, KC_F15, LCTL(KC_UP), KC_F12, KC_F13, _______, _______, _______, _______, _______, _______, _______, _______, 
         _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, _______, _______, _______,         _______, 
-        _______,    JR_UG_MODE, _______, _______, _______, _______, _______, _______, _______, _______,      _______, KC__VOLUP, _______, 
+        _______,    BL_TOGG, BL_DEC, BL_INC, BL_STEP, _______, _______, _______, _______, _______,      _______, KC__VOLUP, _______, 
         _______, _______, _______,                   _______,                    _______, _______, KC_MUTE, KC__VOLDOWN, _______),
 };
 
@@ -70,54 +66,69 @@ void rgb_matrix_layer_helper(uint8_t hue, uint8_t sat, uint8_t val, uint8_t mode
             break;
         }
     }
-};
+}
+
+void step_underglow(void) {
+    switch (underglow_mode) {
+        case 1: {
+            // breath
+            rgb_matrix_layer_helper(HSV_MAGENTA, 1, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
+            underglow_mode = 0;
+        } break;
+        default: {
+            // static
+            rgb_matrix_layer_helper(HSV_CYAN, 0, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
+            underglow_mode = 1;
+        } break;
+    }
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // static uint32_t key_timer;
-
     switch (keycode) {
-        /*
-        g_led_config
-        need a fix to control underglow separte
-        RGB_TOG + X = for underglow
-        RGB_TOG + Y
-        */
-        case RGB_TOG:
+        case RGB_TOG: // switch rgb
             if (record->event.pressed) {
-                switch (rgb_matrix_get_flags()) {
-                    case LED_FLAG_ALL: {
+                /*
+                0 = off
+                10 = all
+                1 = top
+                2 = underglow
+                3 = custom
+                */
+                switch (custom_light_mode) {
+                    case 10: { // all
+                        rgb_matrix_set_flags(LED_FLAG_ALL);
+                        step_underglow();
+                        rgb_matrix_set_color_all(0, 0, 0);
+                        custom_light_mode = 1;
+                    } break;
+                    case 1: { // top
                         rgb_matrix_set_flags(LED_FLAG_KEYLIGHT | LED_FLAG_MODIFIER);
                         rgb_matrix_set_color_all(0, 0, 0);
+                        custom_light_mode = 2;
                     } break;
-                    case LED_FLAG_KEYLIGHT | LED_FLAG_MODIFIER: {
+                    case 2: { // underglow
                         rgb_matrix_set_flags(LED_FLAG_UNDERGLOW);
                         rgb_matrix_set_color_all(0, 0, 0);
+                        custom_light_mode = 0;
                     } break;
-                    case LED_FLAG_UNDERGLOW: {
+                    case 0: { // off
                         rgb_matrix_set_flags(LED_FLAG_NONE);
                         rgb_matrix_disable_noeeprom();
+                        custom_light_mode = 3;
                     } break;
-                    default: {
-                        rgb_matrix_set_flags(LED_FLAG_ALL);
+                    default: { // custom
+                        // default is the custom mode
+                        rgb_matrix_set_flags(LED_FLAG_KEYLIGHT | LED_FLAG_MODIFIER);
                         rgb_matrix_enable_noeeprom();
+                        step_underglow(); // set custom underglow
+                        custom_light_mode = 10; // set switch to all RGB for next iteration
                     } break;
                 }
             }
             return false;
-        case JR_UG_MODE:
+        case BL_TOGG:
             if (record->event.pressed) {
-                switch (underglow_mode) {
-                    case 1: {
-                        // breath
-                        rgb_matrix_layer_helper(HSV_MAGENTA, 1, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
-                        underglow_mode = 0;
-                    } break;
-                    default: {
-                        // static
-                        rgb_matrix_layer_helper(HSV_CYAN, 0, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
-                        underglow_mode = 1;
-                    } break;
-                }
+                step_underglow();
             }
             return false;
         default:
