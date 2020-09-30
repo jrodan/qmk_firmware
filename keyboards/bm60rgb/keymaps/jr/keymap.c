@@ -1,18 +1,3 @@
-/* Copyright 2020 MechMerlin
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 #include QMK_KEYBOARD_H
 #include "lib/lib8tion/lib8tion.h"
 
@@ -20,6 +5,10 @@
 
 static uint32_t underglow_mode;
 static uint32_t custom_light_mode;
+
+// rgb timeout
+// long start = 0;
+// bool timer_led = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
@@ -29,11 +18,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, MT(MOD_RSFT, KC_SLSH), KC_UP, KC_SLSH, 
         KC_LCTL, KC_LGUI, KC_LALT, KC_SPC, KC_RALT, MO(1), KC_LEFT, KC_DOWN, KC_RGHT),
     [1] = LAYOUT(
-        RESET, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, 
+        RESET,   KC_F1,  KC_F2,  KC_F3,       KC_F4,  KC_F5,  KC_F6,  KC_F7,    KC_F8,   KC_F9,  KC_F10,   KC_F11,  KC_F12,  KC_DEL, 
         _______, KC_F14, KC_F15, LCTL(KC_UP), KC_F12, KC_F13, _______, _______, _______, _______, _______, _______, _______, _______, 
-        _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, _______, _______, _______,         _______, 
+        _______, RGB_TOG, RGB_MOD, RGB_HUI,   RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, _______, _______, _______,         _______, 
         _______,    BL_TOGG, BL_DEC, BL_INC, BL_STEP, _______, _______, _______, _______, _______,      _______, KC__VOLUP, _______, 
-        _______, _______, _______,                   _______,                    _______, _______, KC_MUTE, KC__VOLDOWN, _______),
+        _______, _______, _______,                      _______,                    _______, _______, KC_MUTE, KC__VOLDOWN, _______),
 };
 
 void rgb_matrix_layer_helper(uint8_t hue, uint8_t sat, uint8_t val, uint8_t mode, uint8_t speed, uint8_t led_type) {
@@ -68,22 +57,43 @@ void rgb_matrix_layer_helper(uint8_t hue, uint8_t sat, uint8_t val, uint8_t mode
     }
 }
 
-void step_underglow(void) {
+void set_underglow(void) {
     switch (underglow_mode) {
         case 1: {
             // breath
             rgb_matrix_layer_helper(HSV_MAGENTA, 1, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
-            underglow_mode = 0;
         } break;
         default: {
             // static
             rgb_matrix_layer_helper(HSV_CYAN, 0, rgb_matrix_config.speed, LED_FLAG_UNDERGLOW);
-            underglow_mode = 1;
         } break;
     }
 }
 
+void rgb_matrix_indicators_user(void) {
+    if(custom_light_mode == 3) {
+        set_underglow();
+    }
+}
+
+void step_underglow(void) {
+    if(underglow_mode == 0) {
+        underglow_mode = 1;
+    } else {
+        underglow_mode = 0;
+    }
+    set_underglow();
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    
+    // rgb timeout
+    // if(start == 0) {
+    //     rgb_matrix_enable_noeeprom();
+    // }
+    // start = timer_read();
+    // timer_led = true;
+
     switch (keycode) {
         case RGB_TOG: // switch rgb
             if (record->event.pressed) {
@@ -135,6 +145,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;  // Process all other keycodes normally
     }
 }
+
+void suspend_power_down_user(void) {
+    rgb_matrix_set_suspend_state(true);
+    rgb_matrix_set_flags(LED_FLAG_NONE);
+    rgb_matrix_disable_noeeprom();
+}
+
+void suspend_wakeup_init_user(void) {
+    rgb_matrix_set_suspend_state(false);
+    rgb_matrix_set_flags(LED_FLAG_KEYLIGHT | LED_FLAG_MODIFIER);
+    rgb_matrix_enable_noeeprom();
+    step_underglow(); // set custom underglow
+}
+
+// void matrix_scan_user(void) {
+//     // rgb timeout
+//     if (timer_elapsed(start) > 5000) {
+//         start = 0;
+//         timer_clear();
+//         timer_led = false;
+//         rgb_matrix_disable_noeeprom();
+//     }
+// }
 
 // https://github.com/qmk/qmk_firmware/blob/master/keyboards/crkbd/keymaps/gotham/rgb.c
 // https://github.com/qmk/qmk_firmware/blob/a4fd5e2491aa7213d15ef2ff3615b8eb75660e93/keyboards/crkbd/keymaps/rpbaptist/keymap.c

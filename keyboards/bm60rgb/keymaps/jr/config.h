@@ -108,3 +108,6 @@
 // #endif
 //     RGB_MATRIX_EFFECT_MAX
 // };
+
+#define RGBLIGHT_SLEEP
+#define RGB_DISABLE_TIMEOUT 5000
