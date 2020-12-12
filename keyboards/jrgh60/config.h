@@ -29,6 +29,10 @@
 #define BACKLIGHT_LEVELS 5
 #endif
 
+#define BACKLIGHT_BREATHING
+#define BREATHING_PERIOD 5
+//#define BACKLIGHT_CAPS_LOCK
+
 /* Set 0 if debouncing isn't needed */
 #define DEBOUNCING_DELAY 5
 
