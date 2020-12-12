@@ -12,7 +12,7 @@
 #endif
 
 #ifdef PROTOCOL_VUSB
-#    include "usbdrv.h"
+#    include <usbdrv/usbdrv.h>
 #endif
 
 #ifdef EE_HANDS
@@ -72,7 +72,7 @@ bool usbIsActive(void) {
 
     return false;
 }
-#elif defined(PROTOCOL_LUFA)
+#elif defined(PROTOCOL_LUFA) && defined(OTGPADE)
 static inline bool usbIsActive(void) {
     USB_OTGPAD_On();  // enables VBUS pad
     wait_us(5);
