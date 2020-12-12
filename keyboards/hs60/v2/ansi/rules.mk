@@ -31,3 +31,6 @@ SRC =	keyboards/wilba_tech/wt_main.c \
 		drivers/issi/is31fl3733.c \
 		quantum/color.c \
 		drivers/chibios/i2c_master.c
+
+RGBLIGHT_ENABLE = yes # underglow
+#BACKLIGHT_PIN = A6
