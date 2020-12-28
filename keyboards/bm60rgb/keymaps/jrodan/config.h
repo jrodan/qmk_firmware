@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 
-// num rgb_matrix_effects {
+// enum rgb_matrix_effects {
 //     RGB_MATRIX_NONE = 0,
 //     RGB_MATRIX_SOLID_COLOR = 1,     // Static single hue, no speed support
 //     RGB_MATRIX_ALPHAS_MODS,         // Static dual hue, speed is hue for secondary hue

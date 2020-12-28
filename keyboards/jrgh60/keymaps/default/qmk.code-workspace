@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../.."
+		},
+		{
+			"path": "../../../40percentclub/nori"
 		}
 	],
 	"settings": {}

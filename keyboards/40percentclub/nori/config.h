@@ -48,16 +48,18 @@
 #define DIODE_DIRECTION COL2ROW
 
 #define BACKLIGHT_PIN B5
-//#define BACKLIGHT_BREATHING
+#define BACKLIGHT_BREATHING
 #define BACKLIGHT_LEVELS 3
 
 // enable RGB underglow
 #define RGB_DI_PIN B4
 #define RGBLIGHT_ANIMATIONS
-#define RGBLED_NUM 10
+#define RGBLED_NUM 11
 #define RGBLIGHT_HUE_STEP 8
 #define RGBLIGHT_SAT_STEP 8
 #define RGBLIGHT_VAL_STEP 8
+#define RGBLIGHT_LIMIT_VAL 200
+#define RGBLIGHT_SLEEP
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5

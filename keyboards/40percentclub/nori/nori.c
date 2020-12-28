@@ -18,8 +18,16 @@
 void matrix_init_kb(void) {
 	// put your keyboard start-up code here
 	// runs once when the firmware starts up
-
+	backlight_enable();
+	//rgblight_enable();
+	
 	matrix_init_user();
+
+	DDRD &= ~(1<<5);
+    PORTD &= ~(1<<5);
+
+    DDRB &= ~(1<<0);
+    PORTB &= ~(1<<0);
 }
 
 void matrix_scan_kb(void) {
