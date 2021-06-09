@@ -10,7 +10,19 @@
 			"path": "../../../40percentclub/nori"
 		},
 		{
-			"path": "../../../jr-layeri"
+			"path": "../../../jrlayeri"
+		},
+		{
+			"path": "../../../dz60"
+		},
+		{
+			"path": "../../../ai03/polaris/keymaps/jr"
+		},
+		{
+			"path": "../../../dz60/keymaps/jr_plus_arrows"
+		},
+		{
+			"path": "../../../dztech/dz60rgb/keymaps/jr"
 		}
 	],
 	"settings": {}
